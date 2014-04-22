@@ -8,9 +8,9 @@ Collection of debugging helpers for Broccoli.
 npm install broccoli-debug
 ```
 
-Without `--save-dev`, this will install broccoli-debug but not store it in
-package.json. You will oftentimes use broccoli-debug as a transient debugging
-aid, and not check it in.
+Without `--save-dev`, this will install broccoli-debug without saving it as a
+dependency in  `package.json`. You will oftentimes use broccoli-debug as a
+transient debugging aid, and not commit it into your repo.
 
 ## Usage
 
@@ -21,7 +21,7 @@ var instrument = require('broccoli-debug').instrument;
 ### instrument.print
 
 ```js
-var tree = instrument.print(tree);
+tree = instrument.print(tree);
 ```
 
 This will print to stderr the location of the `tree` files on the file system
