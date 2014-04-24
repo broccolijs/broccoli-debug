@@ -14,7 +14,7 @@ function instrumentPrint (tree) {
           return dir
         })
         .catch(function (err) {
-          console.error(prefix + 'Error: ' + err)
+          console.error(prefix + err)
           throw err
         })
     },
