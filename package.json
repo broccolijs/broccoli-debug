@@ -23,7 +23,8 @@
     "broccoli-test-helper": "^1.1.0",
     "co": "^4.6.0",
     "qunit-eslint": "^1.0.0",
-    "qunitjs": "^2.3.2"
+    "qunitjs": "^2.3.2",
+    "symlink-or-copy": "^1.1.8"
   },
   "dependencies": {
     "broccoli-plugin": "^1.2.1",
