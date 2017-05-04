@@ -11,15 +11,22 @@ const describe = QUnit.module;
 const it = QUnit.test;
 
 describe('BroccoliConditionalDebug', function(hooks) {
-  let input;
+  let input, debug;
 
-  hooks.beforeEach(function() {
-    return createTempDir().then(tempDir => (input = tempDir));
-  });
+  hooks.beforeEach(co.wrap(function* () {
+    input = yield createTempDir();
+    debug = yield createTempDir();
 
-  hooks.afterEach(function() {
-    return input.dispose();
-  });
+    process.env.BROCCOLI_DEBUG_PATH = debug.path();
+  }));
+
+  hooks.afterEach(co.wrap(function* () {
+    yield input.dispose();
+    yield debug.dispose();
+
+    delete process.env.BROCCOLI_DEBUG_PATH;
+    delete process.env.BROCCOLI_DEBUG;
+  }));
 
   it('should pass through', co.wrap(function* (assert) {
     let fixture = {
@@ -38,9 +45,54 @@ describe('BroccoliConditionalDebug', function(hooks) {
     let output = yield buildOutput(node);
 
     assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), {});
+  }));
 
-    output = yield output.rebuild();
+  it('should emit a copy of the input into BROCCOLI_DEBUG_PATH', co.wrap(function* (assert) {
+    let label = 'test-1';
+    let fixture = {
+      'foo.txt': 'baas',
+      'derp': {
+        'lol': {
+          'ha!': 'hehe'
+        }
+      }
+    };
+    input.write(fixture);
 
-    assert.deepEqual(output.changes(), {});
+    process.env.BROCCOLI_DEBUG = '*';
+    let node = new BroccoliConditionalDebug(input.path(), label);
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { [label]: fixture });
+  }));
+
+  it('clears stale content from debug path', co.wrap(function* (assert) {
+    let label = 'test-1';
+    let fixture = {
+      'foo.txt': 'baas',
+      'derp': {
+        'lol': {
+          'ha!': 'hehe'
+        }
+      }
+    };
+    input.write(fixture);
+
+    debug.write({
+      [label]: {
+        'stuff': 'was here'
+      }
+    });
+
+    process.env.BROCCOLI_DEBUG = '*';
+    let node = new BroccoliConditionalDebug(input.path(), label);
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { [label]: fixture });
   }));
 });
