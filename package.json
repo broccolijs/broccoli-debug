@@ -16,8 +16,7 @@
   "repository": {},
   "homepage": "",
   "files": [
-    "dist/",
-    "!dist/tests"
+    "src/"
   ],
   "devDependencies": {
     "broccoli-test-helper": "^1.1.0",
