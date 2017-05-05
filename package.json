@@ -1,6 +1,6 @@
 {
   "name": "broccoli-conditional-debug",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Enable easy debugging of broccoli pipelines with broccoli-conditional-debug!",
   "main": "src/index.js",
   "scripts": {
