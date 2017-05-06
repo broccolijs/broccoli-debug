@@ -11,13 +11,22 @@ const describe = QUnit.module;
 const it = QUnit.test;
 
 describe('BroccoliConditionalDebug', function(hooks) {
-  let input, debug;
+  let fixture, input, debug;
 
   hooks.beforeEach(co.wrap(function* () {
     input = yield createTempDir();
     debug = yield createTempDir();
 
     process.env.BROCCOLI_DEBUG_PATH = debug.path();
+
+    fixture = {
+      'foo.txt': 'baas',
+      'derp': {
+        'lol': {
+          'ha!': 'hehe'
+        }
+      }
+    };
   }));
 
   hooks.afterEach(co.wrap(function* () {
@@ -41,15 +50,6 @@ describe('BroccoliConditionalDebug', function(hooks) {
   });
 
   it('should pass through', co.wrap(function* (assert) {
-    let fixture = {
-      'foo.txt': 'baas',
-      'derp': {
-        'lol': {
-          'ha!': 'hehe'
-        }
-      }
-    };
-
     input.write(fixture);
 
     let node = new BroccoliConditionalDebug(input.path(), 'test-1');
@@ -62,14 +62,6 @@ describe('BroccoliConditionalDebug', function(hooks) {
 
   it('should emit a copy of the input into BROCCOLI_DEBUG_PATH', co.wrap(function* (assert) {
     let label = 'test-1';
-    let fixture = {
-      'foo.txt': 'baas',
-      'derp': {
-        'lol': {
-          'ha!': 'hehe'
-        }
-      }
-    };
     input.write(fixture);
 
     process.env.BROCCOLI_DEBUG = '*';
@@ -83,14 +75,6 @@ describe('BroccoliConditionalDebug', function(hooks) {
 
   it('clears stale content from debug path', co.wrap(function* (assert) {
     let label = 'test-1';
-    let fixture = {
-      'foo.txt': 'baas',
-      'derp': {
-        'lol': {
-          'ha!': 'hehe'
-        }
-      }
-    };
     input.write(fixture);
 
     debug.write({
