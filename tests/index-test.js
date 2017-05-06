@@ -28,6 +28,18 @@ describe('BroccoliConditionalDebug', function(hooks) {
     delete process.env.BROCCOLI_DEBUG;
   }));
 
+  describe('BroccoliConditionalDebug.buildDebugCallback', function() {
+    it('returns a callback that builds debug trees with a consistent prefix', function(assert) {
+      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-addon');
+
+      let tree1 = debugTree(input.path(), 'addon-tree');
+      assert.equal(tree1.debugLabel, 'foo-addon:addon-tree');
+
+      let tree2 = debugTree(input.path(), 'vendor-tree');
+      assert.equal(tree2.debugLabel, 'foo-addon:vendor-tree');
+    });
+  });
+
   it('should pass through', co.wrap(function* (assert) {
     let fixture = {
       'foo.txt': 'baas',
