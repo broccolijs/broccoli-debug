@@ -10,7 +10,13 @@ const minimatch = require("minimatch");
 module.exports = class BroccoliConditionalDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
     return (input, label) => {
-      return new this(input, `${baseLabel}:${label}`);
+      let combinedLabel = `${baseLabel}:${label}`;
+
+      if (shouldSyncDebugDir(combinedLabel)) {
+        return new this(input, `${baseLabel}:${label}`);
+      }
+
+      return input;
     };
   }
 
