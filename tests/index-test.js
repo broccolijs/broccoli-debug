@@ -39,6 +39,8 @@ describe('BroccoliConditionalDebug', function(hooks) {
 
   describe('BroccoliConditionalDebug.buildDebugCallback', function() {
     it('returns a callback that builds debug trees with a consistent prefix', function(assert) {
+      process.env.BROCCOLI_DEBUG = '*';
+
       let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-addon');
 
       let tree1 = debugTree(input.path(), 'addon-tree');
@@ -47,6 +49,39 @@ describe('BroccoliConditionalDebug', function(hooks) {
       let tree2 = debugTree(input.path(), 'vendor-tree');
       assert.equal(tree2.debugLabel, 'foo-addon:vendor-tree');
     });
+
+    it('returns the input tree if debug flag does not match label', co.wrap(function* (assert) {
+      input.write(fixture);
+      let inputPath = input.path();
+
+      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-bar');
+      let subject = debugTree(inputPath, 'derp');
+
+      assert.equal(subject, inputPath, 'is equal to the input because the label does not match the BROCCOLI_DEBUG flag');
+
+      let output = yield buildOutput(subject);
+
+      assert.deepEqual(output.read(), fixture, 'final output matches input');
+      assert.deepEqual(debug.read(), { }, 'debug tree output is empty');
+    }));
+
+    it('returns a BroccoliConditionalDebug tree when the BROCCOLI_DEBUG flag matches the label', co.wrap(function* (assert) {
+      input.write(fixture);
+      let inputPath = input.path();
+
+      process.env.BROCCOLI_DEBUG = 'foo-bar:herp';
+
+      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-bar');
+      let subject = debugTree(inputPath, 'herp');
+
+      assert.notEqual(subject, inputPath, 'tree2 does not match input because the label matches the BROCCOLI_DEBUG flag');
+      assert.ok(subject instanceof BroccoliConditionalDebug, 'tree2 is a BroccoliConditionalDebug instance');
+
+      let output = yield buildOutput(subject);
+
+      assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+    }));
   });
 
   it('should pass through', co.wrap(function* (assert) {
