@@ -24,11 +24,11 @@ module.exports = class BroccoliConditionalDebug extends Plugin {
     this.debugLabel = label;
     this._sync = undefined;
     this._haveLinked = false;
+    this._shouldSync = shouldSyncDebugDir(label);
   }
 
   build() {
-    let shouldSync = shouldSyncDebugDir(this.debugLabel);
-    if (shouldSync) {
+    if (this._shouldSync) {
       let treeSync = this._sync;
       if (!treeSync) {
         let debugOutputPath = buildDebugOutputPath(this.debugLabel);
