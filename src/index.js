@@ -8,6 +8,12 @@ const TreeSync = require('tree-sync');
 const minimatch = require("minimatch");
 
 module.exports = class BroccoliConditionalDebug extends Plugin {
+  static buildDebugCallback(baseLabel) {
+    return (input, label) => {
+      return new this(input, `${baseLabel}:${label}`);
+    };
+  }
+
   constructor(node, label) {
     super([node], {
       name: 'BroccoliDebug',
