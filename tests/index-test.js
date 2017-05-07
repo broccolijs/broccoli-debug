@@ -130,6 +130,20 @@ describe('BroccoliDebug', function(hooks) {
     assert.deepEqual(debug.read(), { [label]: fixture });
   }));
 
+  it('can specify the debugBaseDir in options', co.wrap(function* (assert) {
+    let label = 'test-1';
+    input.write(fixture);
+
+    delete process.env.BROCCOLI_DEBUG_PATH;
+    process.env.BROCCOLI_DEBUG = '*';
+    let node = new BroccoliDebug(input.path(), { label, baseDir: debug.path() });
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { [label]: fixture });
+  }));
+
   it('can be forced to debug mode (supports stew.debug)', co.wrap(function* (assert) {
     let label = 'test-1';
     input.write(fixture);
