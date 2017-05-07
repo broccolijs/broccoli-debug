@@ -5,6 +5,7 @@ const path = require('path');
 const symlinkOrCopy = require('symlink-or-copy');
 const Plugin = require('broccoli-plugin');
 const TreeSync = require('tree-sync');
+const sanitize = require('sanitize-filename');
 const minimatch = require("minimatch");
 
 module.exports = class BroccoliDebug extends Plugin {
@@ -71,7 +72,8 @@ function processOptions(labelOrOptions) {
 }
 
 function buildDebugOutputPath(options) {
-  let debugOutputPath = path.join(options.baseDir, options.label);
+  let label = sanitize(options.label, { replacement: '-' });
+  let debugOutputPath = path.join(options.baseDir, label);
 
   return debugOutputPath;
 }
