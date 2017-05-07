@@ -1,7 +1,7 @@
 {
-  "name": "broccoli-conditional-debug",
+  "name": "broccoli-debug",
   "version": "0.5.3",
-  "description": "Enable easy debugging of broccoli pipelines with broccoli-conditional-debug!",
+  "description": "Enable easy debugging of broccoli pipelines with broccoli-debug!",
   "main": "src/index.js",
   "scripts": {
     "test": "qunit tests/**/*-test.js",

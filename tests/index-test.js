@@ -5,12 +5,12 @@ const buildOutput = BroccoliTestHelper.buildOutput;
 const createTempDir = BroccoliTestHelper.createTempDir;
 const co = require('co');
 
-const BroccoliConditionalDebug = require('../src');
+const BroccoliDebug = require('../src');
 
 const describe = QUnit.module;
 const it = QUnit.test;
 
-describe('BroccoliConditionalDebug', function(hooks) {
+describe('BroccoliDebug', function(hooks) {
   let fixture, input, debug;
 
   hooks.beforeEach(co.wrap(function* () {
@@ -37,11 +37,11 @@ describe('BroccoliConditionalDebug', function(hooks) {
     delete process.env.BROCCOLI_DEBUG;
   }));
 
-  describe('BroccoliConditionalDebug.buildDebugCallback', function() {
+  describe('BroccoliDebug.buildDebugCallback', function() {
     it('returns a callback that builds debug trees with a consistent prefix', function(assert) {
       process.env.BROCCOLI_DEBUG = '*';
 
-      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-addon');
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-addon');
 
       let tree1 = debugTree(input.path(), 'addon-tree');
       assert.equal(tree1.debugLabel, 'foo-addon:addon-tree');
@@ -54,7 +54,7 @@ describe('BroccoliConditionalDebug', function(hooks) {
       input.write(fixture);
       let inputPath = input.path();
 
-      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-bar');
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-bar');
       let subject = debugTree(inputPath, 'derp');
 
       assert.equal(subject, inputPath, 'is equal to the input because the label does not match the BROCCOLI_DEBUG flag');
@@ -65,17 +65,17 @@ describe('BroccoliConditionalDebug', function(hooks) {
       assert.deepEqual(debug.read(), { }, 'debug tree output is empty');
     }));
 
-    it('returns a BroccoliConditionalDebug tree when the BROCCOLI_DEBUG flag matches the label', co.wrap(function* (assert) {
+    it('returns a BroccoliDebug tree when the BROCCOLI_DEBUG flag matches the label', co.wrap(function* (assert) {
       input.write(fixture);
       let inputPath = input.path();
 
       process.env.BROCCOLI_DEBUG = 'foo-bar:herp';
 
-      let debugTree = BroccoliConditionalDebug.buildDebugCallback('foo-bar');
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-bar');
       let subject = debugTree(inputPath, 'herp');
 
       assert.notEqual(subject, inputPath, 'tree2 does not match input because the label matches the BROCCOLI_DEBUG flag');
-      assert.ok(subject instanceof BroccoliConditionalDebug, 'tree2 is a BroccoliConditionalDebug instance');
+      assert.ok(subject instanceof BroccoliDebug, 'tree2 is a BroccoliDebug instance');
 
       let output = yield buildOutput(subject);
 
@@ -87,7 +87,7 @@ describe('BroccoliConditionalDebug', function(hooks) {
   it('should pass through', co.wrap(function* (assert) {
     input.write(fixture);
 
-    let node = new BroccoliConditionalDebug(input.path(), 'test-1');
+    let node = new BroccoliDebug(input.path(), 'test-1');
 
     let output = yield buildOutput(node);
 
@@ -100,7 +100,7 @@ describe('BroccoliConditionalDebug', function(hooks) {
     input.write(fixture);
 
     process.env.BROCCOLI_DEBUG = '*';
-    let node = new BroccoliConditionalDebug(input.path(), label);
+    let node = new BroccoliDebug(input.path(), label);
 
     let output = yield buildOutput(node);
 
@@ -119,7 +119,7 @@ describe('BroccoliConditionalDebug', function(hooks) {
     });
 
     process.env.BROCCOLI_DEBUG = '*';
-    let node = new BroccoliConditionalDebug(input.path(), label);
+    let node = new BroccoliDebug(input.path(), label);
 
     let output = yield buildOutput(node);
 
@@ -135,7 +135,7 @@ describe('BroccoliConditionalDebug', function(hooks) {
     function match(options) {
       it(`${options.label} ${options.matches ? 'matches' : 'does not match'} ${options.env}`, function(assert) {
         process.env.BROCCOLI_DEBUG = options.env;
-        let result = BroccoliConditionalDebug._shouldSyncDebugDir(options.label);
+        let result = BroccoliDebug._shouldSyncDebugDir(options.label);
 
         assert.equal(result, options.matches);
       });

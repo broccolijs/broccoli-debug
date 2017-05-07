@@ -1,4 +1,4 @@
-# broccoli-conditional-debug
+# broccoli-debug
 
 Utility for build pipeline authors to allow trivial debugging of the Broccoli
 pipelines they author.
@@ -16,21 +16,21 @@ but improved in a few ways:
 ### Pipeline Authors
 
 To allow consumers to debug the internals of various stages in your build pipeline,
-you create a new instance of `BroccoliConditionalDebug` and return it instead.
+you create a new instance of `BroccoliDebug` and return it instead.
 
 Something like this:
 
 ```js
-var BroccoliConditionalDebug = require('broccoli-conditional-debug');
+var BroccoliDebug = require('broccoli-debug');
 
-let tree = new BroccoliConditionalDebug(input, `ember-engines:${this.name}:addon-input`);
+let tree = new BroccoliDebug(input, `ember-engines:${this.name}:addon-input`);
 ```
 
 Obviously, this would get quite verbose to do many times, so we have created a shortcut
 to easily create a number of debug trees with a shared prefix:
 
 ```js
-let debugTree = BroccoliConditionalDebug.buildDebugCallback(`ember-engines:${this.name}`);
+let debugTree = BroccoliDebug.buildDebugCallback(`ember-engines:${this.name}`);
 
 let tree1 = debugTree(input1, 'addon-input');
 // tree1.debugLabel => 'ember-engines:<some-name>:addon-input'
@@ -57,8 +57,8 @@ ls DEBUG/ember-engines:*
 
 ### Installation
 
-* `git clone git@github.com:rwjblue/broccoli-conditional-debug.git`
-* `cd broccoli-conditional-debug`
+* `git clone git@github.com:broccolijs/broccoli-debug.git`
+* `cd broccoli-debug`
 * `yarn`
 
 ### Testing

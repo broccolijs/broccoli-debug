@@ -7,7 +7,7 @@ const Plugin = require('broccoli-plugin');
 const TreeSync = require('tree-sync');
 const minimatch = require("minimatch");
 
-module.exports = class BroccoliConditionalDebug extends Plugin {
+module.exports = class BroccoliDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
     return (input, label) => {
       let combinedLabel = `${baseLabel}:${label}`;
