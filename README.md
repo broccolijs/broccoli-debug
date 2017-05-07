@@ -4,7 +4,7 @@ Utility for build pipeline authors to allow trivial debugging of the Broccoli
 pipelines they author.
 
 Heavily inspired by [@stefanpenner](https://github.com/stefanpenner)'s
-[broccoli-stew](https://github.com/stefanpenner/broccoli-stew)'s `debug` helper,
+[broccoli-stew's `debug`](https://github.com/stefanpenner/broccoli-stew/blob/v1.4.2/lib/debug.js)'s helper,
 but improved in a few ways:
 
 * Supports leaving debug trees in the build with minimal cost when not being used.
@@ -51,6 +51,34 @@ Now you can take a look at the state of that input tree by:
 
 ```js
 ls DEBUG/ember-engines:*
+```
+
+### API
+
+```ts
+interface BroccoliDebugOptions {
+  /**
+    The label to use for the debug folder. By default, will be placed in `DEBUG/*`.
+  */
+  label: string
+
+  /**
+    Should the tree be "always on" for debugging? This is akin to `debugger`, its very
+    useful while actively working on a build pipeline, but is likely something you would
+    remove before publishing.
+  */
+  force?: boolean
+}
+
+class BroccoliDebug {
+  /**
+    Builds a callback function for easily generating `BroccoliDebug` instances
+    with a shared prefix.
+  */
+  static buildDebugCallback(prefix: string): (node: any, labelOrOptions: string | BroccoliDebugOptions) => BroccoliNode
+  constructor(node: BroccoliNode, labelOrOptions: string | BroccoliDebugOptions);
+  debugLabel: string;
+}
 ```
 
 ## Development
