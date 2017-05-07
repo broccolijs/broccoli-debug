@@ -4,7 +4,7 @@ Utility for build pipeline authors to allow trivial debugging of the Broccoli
 pipelines they author.
 
 Heavily inspired by [@stefanpenner](https://github.com/stefanpenner)'s
-[broccoli-stew](https://github.com/stefanpenner/broccoli-stew)'s `debug` helper,
+[broccoli-stew's `debug`](https://github.com/stefanpenner/broccoli-stew/blob/v1.4.2/lib/debug.js)'s helper,
 but improved in a few ways:
 
 * Supports leaving debug trees in the build with minimal cost when not being used.
