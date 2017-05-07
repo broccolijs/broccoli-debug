@@ -83,7 +83,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar-herp': fixture }, 'debug tree output matches input');
     }));
 
     it('returns a BroccoliDebug tree when `force: true` option is passed', co.wrap(function* (assert) {
@@ -102,7 +102,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar-herp': fixture }, 'debug tree output matches input');
     }));
   });
 
@@ -128,6 +128,33 @@ describe('BroccoliDebug', function(hooks) {
 
     assert.deepEqual(output.read(), fixture);
     assert.deepEqual(debug.read(), { [label]: fixture });
+  }));
+
+  it('can specify the debugBaseDir in options', co.wrap(function* (assert) {
+    let label = 'test-1';
+    input.write(fixture);
+
+    delete process.env.BROCCOLI_DEBUG_PATH;
+    process.env.BROCCOLI_DEBUG = '*';
+    let node = new BroccoliDebug(input.path(), { label, baseDir: debug.path() });
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { [label]: fixture });
+  }));
+
+  it('removes special characters in label', co.wrap(function* (assert) {
+    let label = 'test-1*bar\\baz';
+    input.write(fixture);
+
+    process.env.BROCCOLI_DEBUG = '*';
+    let node = new BroccoliDebug(input.path(), label);
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { 'test-1-bar-baz': fixture });
   }));
 
   it('can be forced to debug mode (supports stew.debug)', co.wrap(function* (assert) {

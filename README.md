@@ -63,6 +63,16 @@ interface BroccoliDebugOptions {
   label: string
 
   /**
+    The base directory to place the input node contents when debugging is enabled.
+
+    Chooses the default in this order:
+
+    * `process.env.BROCCOLI_DEBUG_PATH`
+    * `path.join(process.cwd(), 'DEBUG')`
+  */
+  baseDir: string
+
+  /**
     Should the tree be "always on" for debugging? This is akin to `debugger`, its very
     useful while actively working on a build pipeline, but is likely something you would
     remove before publishing.
