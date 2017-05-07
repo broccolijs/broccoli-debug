@@ -48,6 +48,9 @@ describe('BroccoliDebug', function(hooks) {
 
       let tree2 = debugTree(input.path(), 'vendor-tree');
       assert.equal(tree2.debugLabel, 'foo-addon:vendor-tree');
+
+      let tree3 = debugTree(input.path(), { label: 'derp-tree'});
+      assert.equal(tree3.debugLabel, 'foo-addon:derp-tree');
     });
 
     it('returns the input tree if debug flag does not match label', co.wrap(function* (assert) {
@@ -82,6 +85,25 @@ describe('BroccoliDebug', function(hooks) {
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
       assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
     }));
+
+    it('returns a BroccoliDebug tree when `force: true` option is passed', co.wrap(function* (assert) {
+      input.write(fixture);
+      let inputPath = input.path();
+
+      // ensure no env flag is set
+      delete process.env.BROCCOLI_DEBUG;
+
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-bar');
+      let subject = debugTree(inputPath, { label: 'herp', force: true });
+
+      assert.notEqual(subject, inputPath, 'does not match input because the label matches the BROCCOLI_DEBUG flag');
+      assert.ok(subject instanceof BroccoliDebug, 'is a BroccoliDebug instance');
+
+      let output = yield buildOutput(subject);
+
+      assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+    }));
   });
 
   it('should pass through', co.wrap(function* (assert) {
@@ -101,6 +123,22 @@ describe('BroccoliDebug', function(hooks) {
 
     process.env.BROCCOLI_DEBUG = '*';
     let node = new BroccoliDebug(input.path(), label);
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), { [label]: fixture });
+  }));
+
+  it('can be forced to debug mode (supports stew.debug)', co.wrap(function* (assert) {
+    let label = 'test-1';
+    input.write(fixture);
+
+    delete process.env.BROCCOLI_DEBUG;
+    let node = new BroccoliDebug(input.path(), {
+      label,
+      force: true
+    });
 
     let output = yield buildOutput(node);
 

@@ -9,28 +9,31 @@ const minimatch = require("minimatch");
 
 module.exports = class BroccoliDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
-    return (input, label) => {
-      let combinedLabel = `${baseLabel}:${label}`;
+    return (input, labelOrOptions) => {
+      let options = processOptions(labelOrOptions);
+      options.label = `${baseLabel}:${options.label}`;
 
-      if (shouldSyncDebugDir(combinedLabel)) {
-        return new this(input, `${baseLabel}:${label}`);
+      if (options.force || shouldSyncDebugDir(options.label)) {
+        return new this(input, options);
       }
 
       return input;
     };
   }
 
-  constructor(node, label) {
+  constructor(node, labelOrOptions) {
+    let options = processOptions(labelOrOptions);
+
     super([node], {
       name: 'BroccoliDebug',
-      annotation: `DEBUG: ${label}`,
+      annotation: `DEBUG: ${options.label}`,
       persistentOutput: true
     });
 
-    this.debugLabel = label;
+    this.debugLabel = options.label;
     this._sync = undefined;
     this._haveLinked = false;
-    this._shouldSync = shouldSyncDebugDir(label);
+    this._shouldSync = options.force || shouldSyncDebugDir(options.label);
   }
 
   build() {
@@ -51,6 +54,17 @@ module.exports = class BroccoliDebug extends Plugin {
     }
   }
 };
+
+function processOptions(labelOrOptions) {
+  let options = {};
+  if (typeof labelOrOptions === 'string') {
+    options.label = labelOrOptions;
+  } else {
+    Object.assign(options, labelOrOptions);
+  }
+
+  return options;
+}
 
 function buildDebugOutputPath(label) {
   let basePath = process.env.BROCCOLI_DEBUG_PATH || path.join(process.cwd(), 'DEBUG');
