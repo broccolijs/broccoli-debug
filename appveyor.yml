@@ -3,24 +3,26 @@
 # Test against these versions of Node.js.
 environment:
   matrix:
-    - nodejs_version: "0.12"
+    - nodejs_version: "6"
 
 # Install scripts. (runs after repo cloning)
 install:
   - git rev-parse HEAD
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: Install-Product node $env:nodejs_version
-  # Typical npm stuff.
-  - md C:\nc
-  - npm config set cache C:\nc
-  - npm version
-  - npm install --no-optional
+  - yarn --version
+  - yarn
+
+cache:
+  - '%LOCALAPPDATA%\Yarn'
+  - '%APPDATA%\Roaming\bower'
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
-  - npm version
-  - cmd: npm test
+  - npm --version
+  - yarn --version
+  - cmd: yarn test
 
 # Don't actually build.
 build: off
