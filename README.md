@@ -1,4 +1,4 @@
-# broccoli-debug
+# broccoli-debug [![Build Status](https://travis-ci.org/broccolijs/broccoli-debug.svg?branch=master)](https://travis-ci.org/broccolijs/broccoli-debug)
 
 Utility for build pipeline authors to allow trivial debugging of the Broccoli
 pipelines they author.
