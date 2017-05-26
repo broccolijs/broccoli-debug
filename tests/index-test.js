@@ -83,7 +83,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar-herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
     }));
 
     it('returns a BroccoliDebug tree when `force: true` option is passed', co.wrap(function* (assert) {
@@ -102,7 +102,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar-herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
     }));
   });
 
@@ -206,10 +206,14 @@ describe('BroccoliDebug', function(hooks) {
       });
     }
 
+    match({ label: 'ember-engines:foo-bar/input', matches: true, env: '*'});
+
     match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: '*'});
     match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:*'});
     match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:*'});
     match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:addon-input'});
+
+    match({ label: 'ember-engines:foo-bar/input', matches: true, env: 'ember-engines:*'});
 
     match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-cli:*'});
     match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember:*'});

@@ -5,7 +5,6 @@ const path = require('path');
 const symlinkOrCopy = require('symlink-or-copy');
 const Plugin = require('broccoli-plugin');
 const TreeSync = require('tree-sync');
-const sanitize = require('sanitize-filename');
 const minimatch = require("minimatch");
 
 module.exports = class BroccoliDebug extends Plugin {
@@ -71,15 +70,22 @@ function processOptions(labelOrOptions) {
   return options;
 }
 
+function sanitize(input) {
+  return input
+    .replace(/[\/\?<>\\\*\|"]/g, '-');
+}
+
 function buildDebugOutputPath(options) {
-  let label = sanitize(options.label, { replacement: '-' });
+  let label = sanitize(options.label);
   let debugOutputPath = path.join(options.baseDir, label);
 
   return debugOutputPath;
 }
 
-function shouldSyncDebugDir(label) {
+function shouldSyncDebugDir(_label) {
   if (!process.env.BROCCOLI_DEBUG) { return false; }
+
+  let label = sanitize(_label);
 
   return minimatch(label, process.env.BROCCOLI_DEBUG);
 }
