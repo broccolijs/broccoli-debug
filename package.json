@@ -31,7 +31,6 @@
     "heimdalljs": "^0.2.1",
     "heimdalljs-logger": "^0.1.7",
     "minimatch": "^3.0.3",
-    "sanitize-filename": "^1.6.1",
     "tree-sync": "^1.2.2"
   }
 }
