@@ -10,6 +10,11 @@ const minimatch = require("minimatch");
 module.exports = class BroccoliDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
     return (input, labelOrOptions) => {
+      // return input value if falsey
+      if (!input) {
+        return input;
+      }
+
       let options = processOptions(labelOrOptions);
       options.label = `${baseLabel}:${options.label}`;
 

@@ -86,6 +86,22 @@ describe('BroccoliDebug', function(hooks) {
       assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
     }));
 
+    it('does not error when provided a null tree when the BROCCOLI_DEBUG flag matches the label', function(assert) {
+      process.env.BROCCOLI_DEBUG = 'foo-bar:herp';
+
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-bar');
+      let subject = debugTree(null, 'herp');
+
+      assert.equal(subject, null, 'passes `null` forward');
+    });
+
+    it('does not error when provided a null tree when the BROCCOLI_DEBUG flag does not matche', function(assert) {
+      let debugTree = BroccoliDebug.buildDebugCallback('foo-bar');
+      let subject = debugTree(null, 'herp');
+
+      assert.equal(subject, null, 'passes `null` forward');
+    });
+
     it('returns a BroccoliDebug tree when `force: true` option is passed', co.wrap(function* (assert) {
       input.write(fixture);
       let inputPath = input.path();
