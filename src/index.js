@@ -1,11 +1,11 @@
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const symlinkOrCopy = require('symlink-or-copy');
 const Plugin = require('broccoli-plugin');
 const TreeSync = require('tree-sync');
-const minimatch = require("minimatch");
+const match = require('./match');
+const buildDebugOutputPath = require('./util').buildDebugOutputPath;
 
 module.exports = class BroccoliDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
@@ -18,7 +18,7 @@ module.exports = class BroccoliDebug extends Plugin {
       let options = processOptions(labelOrOptions);
       options.label = `${baseLabel}:${options.label}`;
 
-      if (options.force || shouldSyncDebugDir(options.label)) {
+      if (options.force || match(options.label)) {
         return new this(input, options);
       }
 
@@ -39,7 +39,7 @@ module.exports = class BroccoliDebug extends Plugin {
     this._sync = undefined;
     this._haveLinked = false;
     this._debugOutputPath = buildDebugOutputPath(options);
-    this._shouldSync = options.force || shouldSyncDebugDir(options.label);
+    this._shouldSync = options.force || match(options.label);
   }
 
   build() {
@@ -75,26 +75,5 @@ function processOptions(labelOrOptions) {
   return options;
 }
 
-function sanitize(input) {
-  return input
-    .replace(/[\/\?<>\\\*\|"]/g, '-');
-}
-
-function buildDebugOutputPath(options) {
-  let label = sanitize(options.label);
-  let debugOutputPath = path.join(options.baseDir, label);
-
-  return debugOutputPath;
-}
-
-function shouldSyncDebugDir(_label) {
-  if (!process.env.BROCCOLI_DEBUG) { return false; }
-
-  let label = sanitize(_label);
-
-  return minimatch(label, process.env.BROCCOLI_DEBUG);
-}
-
-module.exports._shouldSyncDebugDir = shouldSyncDebugDir;
+module.exports._shouldSyncDebugDir = match;
 module.exports._buildDebugOutputPath = buildDebugOutputPath;
-module.exports._shouldSyncDebugDir = shouldSyncDebugDir;

@@ -29,7 +29,6 @@
     "fs-tree-diff": "^0.5.2",
     "heimdalljs": "^0.2.1",
     "heimdalljs-logger": "^0.1.7",
-    "minimatch": "^3.0.3",
     "symlink-or-copy": "^1.1.8",
     "tree-sync": "^1.2.2"
   }

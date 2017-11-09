@@ -1,11 +1,11 @@
 'use strict';
-
 const BroccoliTestHelper = require('broccoli-test-helper');
 const buildOutput = BroccoliTestHelper.buildOutput;
 const createTempDir = BroccoliTestHelper.createTempDir;
 const co = require('co');
 
 const BroccoliDebug = require('../src');
+const match = require('../src/match');
 
 const describe = QUnit.module;
 const it = QUnit.test;
@@ -83,7 +83,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar': { 'herp': fixture } }, 'debug tree output matches input');
     }));
 
     it('does not error when provided a null tree when the BROCCOLI_DEBUG flag matches the label', function(assert) {
@@ -118,7 +118,7 @@ describe('BroccoliDebug', function(hooks) {
       let output = yield buildOutput(subject);
 
       assert.deepEqual(output.read(), fixture, 'final ouptut matches input');
-      assert.deepEqual(debug.read(), { 'foo-bar:herp': fixture }, 'debug tree output matches input');
+      assert.deepEqual(debug.read(), { 'foo-bar': { 'herp': fixture }}, 'debug tree output matches input');
     }));
   });
 
@@ -170,7 +170,7 @@ describe('BroccoliDebug', function(hooks) {
     let output = yield buildOutput(node);
 
     assert.deepEqual(output.read(), fixture);
-    assert.deepEqual(debug.read(), { 'test-1-bar-baz': fixture });
+    assert.deepEqual(debug.read(), { 'test-1-bar': { baz: fixture } });
   }));
 
   it('can be forced to debug mode (supports stew.debug)', co.wrap(function* (assert) {
@@ -213,27 +213,26 @@ describe('BroccoliDebug', function(hooks) {
       delete process.env.BROCCOLI_DEBUG;
     });
 
-    function match(options) {
+    function testMatch(options) {
       it(`${options.label} ${options.matches ? 'matches' : 'does not match'} ${options.env}`, function(assert) {
         process.env.BROCCOLI_DEBUG = options.env;
-        let result = BroccoliDebug._shouldSyncDebugDir(options.label);
-
+        let result = match(options.label);
         assert.equal(result, options.matches);
       });
     }
 
-    match({ label: 'ember-engines:foo-bar/input', matches: true, env: '*'});
+    testMatch({ label: 'ember-engines:foo-bar/input', matches: true, env: '*'});
 
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: '*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:addon-input'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: '*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: true, env: 'ember-engines:foo-bar:addon-input'});
 
-    match({ label: 'ember-engines:foo-bar/input', matches: true, env: 'ember-engines:*'});
+    testMatch({ label: 'ember-engines:foo-bar/input', matches: true, env: 'ember-engines:*'});
 
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-cli:*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember:*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-engines:baz-bar:*'});
-    match({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-engines:foo-bar:addon-output'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-cli:*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember:*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-engines:baz-bar:*'});
+    testMatch({ label: 'ember-engines:foo-bar:addon-input', matches: false, env: 'ember-engines:foo-bar:addon-output'});
   });
 });
