@@ -51,7 +51,7 @@ BROCCOLI_DEBUG=ember-engines:* ember b
 Now you can take a look at the state of that input tree by:
 
 ```js
-ls DEBUG/ember-engines:*
+ls DEBUG/ember-engines/*
 ```
 
 ### API
