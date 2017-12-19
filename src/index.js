@@ -49,6 +49,8 @@ module.exports = class BroccoliDebug extends Plugin {
         treeSync = this._sync = new TreeSync(this.inputPaths[0], this._debugOutputPath);
       }
 
+      console.log(`broccoli-debug(${this.debugLabel}): ${this._debugOutputPath}`);
+ 
       treeSync.sync();
     }
 
