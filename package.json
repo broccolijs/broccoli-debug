@@ -13,7 +13,11 @@
   ],
   "author": "Robert Jackson <me@rwjblue.com>",
   "license": "MIT",
-  "repository": {},
+  "repostory": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/broccolijs/broccoli-debug.git"
+  },
   "homepage": "",
   "files": [
     "src/"
