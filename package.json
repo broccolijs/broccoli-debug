@@ -23,6 +23,7 @@
     "src/"
   ],
   "devDependencies": {
+    "broccoli-source": "^1.1.0",
     "broccoli-test-helper": "^1.1.0",
     "co": "^4.6.0",
     "qunit-eslint": "^1.0.0",

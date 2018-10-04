@@ -3,6 +3,7 @@ const BroccoliTestHelper = require('broccoli-test-helper');
 const buildOutput = BroccoliTestHelper.buildOutput;
 const createTempDir = BroccoliTestHelper.createTempDir;
 const co = require('co');
+const UnwatchedDir = require('broccoli-source').UnwatchedDir;
 
 const BroccoliDebug = require('../src');
 const match = require('../src/match');
@@ -122,7 +123,7 @@ describe('BroccoliDebug', function(hooks) {
     }));
   });
 
-  it('should pass through', co.wrap(function* (assert) {
+  it('should allow string directories as input', co.wrap(function* (assert) {
     input.write(fixture);
 
     let node = new BroccoliDebug(input.path(), 'test-1');
@@ -131,6 +132,32 @@ describe('BroccoliDebug', function(hooks) {
 
     assert.deepEqual(output.read(), fixture);
     assert.deepEqual(debug.read(), {});
+  }));
+
+  it('should pass through', co.wrap(function* (assert) {
+    input.write(fixture);
+
+    let inputTree = new UnwatchedDir(input.path());
+    let node = new BroccoliDebug(inputTree, 'test-1');
+
+    let output = yield buildOutput(node);
+
+    assert.deepEqual(output.read(), fixture);
+    assert.deepEqual(debug.read(), {});
+  }));
+
+  it('returns the input tree if debug flag does not match label', co.wrap(function* (assert) {
+    input.write(fixture);
+
+    let inputTree = new UnwatchedDir(input.path());
+    let subject = new BroccoliDebug(inputTree, 'foo-bar');
+
+    assert.equal(subject, inputTree, 'is equal to the input because the label does not match the BROCCOLI_DEBUG flag');
+
+    let output = yield buildOutput(subject);
+
+    assert.deepEqual(output.read(), fixture, 'final output matches input');
+    assert.deepEqual(debug.read(), { }, 'debug tree output is empty');
   }));
 
   it('should emit a copy of the input into BROCCOLI_DEBUG_PATH', co.wrap(function* (assert) {
