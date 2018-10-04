@@ -29,6 +29,16 @@ module.exports = class BroccoliDebug extends Plugin {
   constructor(node, labelOrOptions) {
     let options = processOptions(labelOrOptions);
 
+    // this is used to avoid creating extraneous broccoli nodes when they are
+    // not going to be used for debugging purposes (e.g. `BROCCOLI_DEBUG=*`
+    // isn't present or doesn't apply to the current label)
+    //
+    // note: classes can only return an object or undefined from their
+    // constructor, hence the guard for typeof object
+    if (typeof node === 'object' && !options.force && !match(options.label)) {
+      return node;
+    }
+
     super([node], {
       name: 'BroccoliDebug',
       annotation: `DEBUG: ${options.label}`,
