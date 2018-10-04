@@ -32,7 +32,8 @@ module.exports = class BroccoliDebug extends Plugin {
     super([node], {
       name: 'BroccoliDebug',
       annotation: `DEBUG: ${options.label}`,
-      persistentOutput: true
+      persistentOutput: true,
+      needsCache: false,
     });
 
     this.debugLabel = options.label;
