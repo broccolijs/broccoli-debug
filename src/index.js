@@ -6,6 +6,7 @@ const Plugin = require('broccoli-plugin');
 const TreeSync = require('tree-sync');
 const match = require('./match');
 const buildDebugOutputPath = require('./util').buildDebugOutputPath;
+const WatchedDir = require('broccoli-source').WatchedDir;
 
 module.exports = class BroccoliDebug extends Plugin {
   static buildDebugCallback(baseLabel) {
@@ -35,8 +36,8 @@ module.exports = class BroccoliDebug extends Plugin {
     //
     // note: classes can only return an object or undefined from their
     // constructor, hence the guard for typeof object
-    if (typeof node === 'object' && !options.force && !match(options.label)) {
-      return node;
+    if (!options.force && !match(options.label)) {
+      return typeof node === 'object' ? node : new WatchedDir(node);
     }
 
     super([node], {
