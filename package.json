@@ -23,7 +23,6 @@
     "src/"
   ],
   "devDependencies": {
-    "broccoli-source": "^1.1.0",
     "broccoli-test-helper": "^1.1.0",
     "co": "^4.6.0",
     "qunit-eslint": "^1.0.0",
@@ -31,6 +30,7 @@
   },
   "dependencies": {
     "broccoli-plugin": "^1.2.1",
+    "broccoli-source": "^1.1.0",
     "fs-tree-diff": "^0.5.2",
     "heimdalljs": "^0.2.1",
     "heimdalljs-logger": "^0.1.7",

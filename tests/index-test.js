@@ -3,7 +3,9 @@ const BroccoliTestHelper = require('broccoli-test-helper');
 const buildOutput = BroccoliTestHelper.buildOutput;
 const createTempDir = BroccoliTestHelper.createTempDir;
 const co = require('co');
-const UnwatchedDir = require('broccoli-source').UnwatchedDir;
+const broccoliSource = require('broccoli-source');
+const UnwatchedDir = broccoliSource.UnwatchedDir;
+const WatchedDir = broccoliSource.WatchedDir;
 
 const BroccoliDebug = require('../src');
 const match = require('../src/match');
@@ -153,6 +155,20 @@ describe('BroccoliDebug', function(hooks) {
     let subject = new BroccoliDebug(inputTree, 'foo-bar');
 
     assert.equal(subject, inputTree, 'is equal to the input because the label does not match the BROCCOLI_DEBUG flag');
+
+    let output = yield buildOutput(subject);
+
+    assert.deepEqual(output.read(), fixture, 'final output matches input');
+    assert.deepEqual(debug.read(), { }, 'debug tree output is empty');
+  }));
+
+  it('returns the string input as a tree if debug flag does not match label', co.wrap(function* (assert) {
+    input.write(fixture);
+
+    let inputTree = input.path();
+    let subject = new BroccoliDebug(inputTree, 'foo-bar');
+
+    assert.ok(subject instanceof WatchedDir, 'returns watched source because the label does not match the BROCCOLI_DEBUG flag');
 
     let output = yield buildOutput(subject);
 
